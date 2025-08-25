@@ -1,3 +1,9 @@
+import UserNavigation from "../components/UserNavigation";
+
 export default function Home() {
-  return <div>Home Page Element</div>;
+  return (
+    <main className="">
+      <UserNavigation />
+    </main>
+  );
 }
