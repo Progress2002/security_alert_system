@@ -7,6 +7,7 @@ import Spinner from "../components/Spinner";
 import { toast } from "react-toastify";
 import { UseAuth } from "../contexts/AuthContext";
 import PreLoader from "../components/PreLoader";
+import { validateStudentDetails } from "../Helpers/validateStudentDetails";
 
 export interface signInFormInputs {
   regNumber: string;
@@ -24,9 +25,16 @@ export default function SignIn() {
     mode: "onChange",
   });
   const { signUp, isSigningUp } = useUserSignUp();
-  const submitFn: SubmitHandler<signInFormInputs> = (data) => {
+  const submitFn: SubmitHandler<signInFormInputs> = ({ regNumber, email }) => {
+    const isValid = validateStudentDetails({ regNumber, email });
+
+    if (!isValid) {
+      toast.error("Registration Number doesn't match with email");
+      return;
+    }
+
     signUp(
-      { regNumber: data.regNumber, email: data.email },
+      { regNumber: regNumber, email: email },
       {
         onSuccess: () => {
           toast("Login Successful");
@@ -84,7 +92,7 @@ export default function SignIn() {
               type="email"
               placeholder="Enter your school Email"
               register={register}
-              pattern={/^[a-zA-Z]{3}\d{7}\.[a-zA-Z]{3}@buk\.edu\.ng$/}
+              pattern={/^[a-zA-Z]{2,3}\d{7}\.[a-zA-Z]{3}@buk\.edu\.ng$/}
               errorText="Enter a valid school Email Address"
             />
             <button

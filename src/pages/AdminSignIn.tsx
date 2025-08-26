@@ -1,9 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import Field from "../components/AdminField";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { useState } from "react";
+import { useAdminSignUp } from "../hooks/useSignIn";
+import Spinner from "../components/Spinner";
+import { toast } from "react-toastify";
 
 export interface adminFormInputs {
   email: string;
@@ -12,6 +15,8 @@ export interface adminFormInputs {
 
 export default function AdminSignIn() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const { signUp, isSigningUp } = useAdminSignUp();
   const {
     register,
     formState: { errors },
@@ -21,7 +26,16 @@ export default function AdminSignIn() {
   });
 
   const submitFn: SubmitHandler<adminFormInputs> = (data) => {
-    console.log(data);
+    signUp(
+      { email: data.email, password: data.password },
+      {
+        onSuccess: () => {
+          toast("Login Successful");
+          navigate("/");
+        },
+        onError: (error) => toast.error(error.message),
+      }
+    );
   };
 
   return (
@@ -55,7 +69,6 @@ export default function AdminSignIn() {
               name="password"
               type={showPassword ? "text" : "password"}
               register={register}
-              pattern={/^[A-Z]{3}\/\d{2}\/[A-Z]{3}\/\d{5}$/}
               errorText="Enter your correct password"
               placeholder="Enter your password"
               endIcon={
@@ -65,10 +78,11 @@ export default function AdminSignIn() {
               }
             />
             <button
+              disabled={isSigningUp}
               type="submit"
               className="w-full text-white font-semibold rounded-full h-14 bg-primary text-center"
             >
-              Sign In
+              {isSigningUp ? <Spinner /> : "Sign In"}
             </button>
           </form>
           <div className="flex gap-2 w-full justify-center">

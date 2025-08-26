@@ -30,6 +30,7 @@ export default function Field({
           {...register(name, {
             required: errorText,
             validate: (input) => {
+              if (!pattern) return true;
               return pattern?.test(input) || errorText;
             },
           })}
