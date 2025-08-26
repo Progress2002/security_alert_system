@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import Logo from "../components/Logo";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import Field from "../components/AdminField";
-import { HiEye } from "react-icons/hi";
+import { HiEye, HiEyeOff } from "react-icons/hi";
+import { useState } from "react";
 
 export interface adminFormInputs {
   email: string;
@@ -10,6 +11,7 @@ export interface adminFormInputs {
 }
 
 export default function AdminSignIn() {
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const {
     register,
     formState: { errors },
@@ -51,12 +53,16 @@ export default function AdminSignIn() {
             <Field
               errors={errors}
               name="password"
-              type="text"
+              type={showPassword ? "text" : "password"}
               register={register}
               pattern={/^[A-Z]{3}\/\d{2}\/[A-Z]{3}\/\d{5}$/}
-              errorText="Enter your correct"
+              errorText="Enter your correct password"
               placeholder="Enter your password"
-              endIcon={<HiEye size={24} />}
+              endIcon={
+                <button onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <HiEyeOff size={24} /> : <HiEye size={24} />}
+                </button>
+              }
             />
             <button
               type="submit"

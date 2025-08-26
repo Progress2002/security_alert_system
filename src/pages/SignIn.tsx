@@ -1,7 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import Field from "../components/StudentsField";
+import { useUserSignUp } from "../hooks/useSignIn";
+import Spinner from "../components/Spinner";
+import { toast } from "react-toastify";
+import { UseAuth } from "../contexts/AuthContext";
+import PreLoader from "../components/PreLoader";
 
 export interface signInFormInputs {
   regNumber: string;
@@ -9,6 +14,8 @@ export interface signInFormInputs {
 }
 
 export default function SignIn() {
+  const { currentSession, isLoading } = UseAuth();
+  const navigate = useNavigate();
   const {
     register,
     formState: { errors },
@@ -16,11 +23,26 @@ export default function SignIn() {
   } = useForm<signInFormInputs>({
     mode: "onChange",
   });
-
+  const { signUp, isSigningUp } = useUserSignUp();
   const submitFn: SubmitHandler<signInFormInputs> = (data) => {
-    console.log(data);
+    signUp(
+      { regNumber: data.regNumber, email: data.email },
+      {
+        onSuccess: () => {
+          toast("Login Successful");
+          navigate("/");
+        },
+        onError: (error) => toast.error(error.message),
+      }
+    );
   };
-
+  if (isLoading)
+    return (
+      <div className="w-[100dvw] h-[100dvh]">
+        <PreLoader />
+      </div>
+    );
+  if (!isLoading && currentSession) return <Navigate to={"/"} />;
   return (
     <main className="w-full max-w-[2480px] h-[100dvh] mx-auto gap-16 flex font-base">
       <section className="hidden md:items-end md:flex md:basis-1/2 text-white md:h-full bg-[url('/getinImage.webp')] bg-center bg-cover ">
@@ -52,7 +74,7 @@ export default function SignIn() {
               name="regNumber"
               type="text"
               register={register}
-              pattern={/^[A-Z]{3}\/\d{2}\/[A-Z]{3}\/\d{5}$/}
+              pattern={/^[A-Za-z]{3}\/\d{2}\/[A-Za-z]{3}\/\d{5}$/}
               errorText="Enter a valid Registration Number"
               placeholder="Enter your Registration Number"
             />
@@ -62,14 +84,15 @@ export default function SignIn() {
               type="email"
               placeholder="Enter your school Email"
               register={register}
-              pattern={/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/}
-              errorText="Enter a valid Email Address"
+              pattern={/^[a-zA-Z]{3}\d{7}\.[a-zA-Z]{3}@buk\.edu\.ng$/}
+              errorText="Enter a valid school Email Address"
             />
             <button
+              disabled={isSigningUp}
               type="submit"
               className="w-full text-white font-semibold rounded-full h-14 bg-primary text-center"
             >
-              Sign In
+              {isSigningUp ? <Spinner /> : "Sign In"}
             </button>
           </form>
           <div className="flex gap-2 w-full justify-center">
