@@ -1,9 +1,9 @@
-import { Navigate } from "react-router-dom";
-import { UseAuth } from "../contexts/AuthContext";
+
+import AdminDashboard from "./AdminDashboard";
+import UserDashboard from "./UserDashboard";
 
 export default function Home() {
-  const { currentUser } = UseAuth();
-  if (currentUser?.user_metadata.role === "admin")
-    return <Navigate to={"/admin"} />;
-  return <main className="">Home Components</main>;
-}
+  return <main className="">
+    <UserDashboard />
+    <AdminDashboard />
+  </main>;
