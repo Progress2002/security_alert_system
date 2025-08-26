@@ -1,3 +1,4 @@
+
 import AdminDashboard from "./AdminDashboard";
 import UserDashboard from "./UserDashboard";
 
@@ -6,4 +7,3 @@ export default function Home() {
     <UserDashboard />
     <AdminDashboard />
   </main>;
-}
