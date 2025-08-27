@@ -96,7 +96,6 @@ const AdminDashboard = () => {
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
       <div className="container mx-auto px-4 py-8 max-w-5xl">
