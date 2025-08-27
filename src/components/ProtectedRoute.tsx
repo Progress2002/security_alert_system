@@ -17,5 +17,5 @@ export default function ProtectedRoute({
     );
   }
   if (!isLoading && !currentUser) return <Navigate to={"/sign-in"} />;
-  if (currentUser) return children;
+  if (!isLoading && currentUser) return children;
 }

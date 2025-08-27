@@ -1,5 +1,10 @@
 import type { IncidentReport } from "@/components/IncidentForm";
-import { addReport, fetchReportsById } from "@/services/ReportsApi";
+import {
+  addReport,
+  fetchAllReports,
+  fetchReportsById,
+  updateReport,
+} from "@/services/ReportsApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useFetchReportsById(id: string) {
@@ -12,6 +17,7 @@ export function useFetchReportsById(id: string) {
 }
 export function useFetchAllReports() {
   const { data, isLoading } = useQuery({
+    queryFn: () => fetchAllReports(),
     queryKey: ["All Reports"],
   });
   return { data, isLoading };
@@ -24,6 +30,30 @@ export function useAddReports() {
       queryclient.invalidateQueries({
         queryKey: ["Reports", variables.studentId],
       }),
+  });
+  return { mutate, isPending };
+}
+
+export function useUpdateReport() {
+  const queryclient = useQueryClient();
+  const { mutate, isPending } = useMutation({
+    mutationFn: ({
+      id,
+      studentId,
+      newStatus,
+    }: {
+      id: string;
+      studentId: string;
+      newStatus: string;
+    }) => updateReport({ id, newStatus }),
+    onSuccess: (_, variables) => {
+      queryclient.invalidateQueries({
+        queryKey: ["All Reports"],
+      });
+      queryclient.invalidateQueries({
+        queryKey: ["Reports", variables.studentId],
+      });
+    },
   });
   return { mutate, isPending };
 }
