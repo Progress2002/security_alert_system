@@ -1,10 +1,16 @@
-
-
+import { UseAuth } from "@/contexts/AuthContext";
 import AdminDashboard from "./AdminDashboard";
 import UserDashboard from "./UserDashboard";
 
 export default function Home() {
-  return <main className="">
-    <UserDashboard />
-    <AdminDashboard />
-  </main>;
+  const { currentUser } = UseAuth();
+  return (
+    <main className="">
+      {currentUser?.user_metadata.role === "student" ? (
+        <UserDashboard />
+      ) : (
+        <AdminDashboard />
+      )}
+    </main>
+  );
+}

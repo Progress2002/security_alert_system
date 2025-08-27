@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,6 +5,11 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Clock, AlertTriangle } from "lucide-react";
 import { toast } from "react-toastify";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { useAddReports } from "@/hooks/useReport";
+import { UseAuth } from "@/contexts/AuthContext";
+import Spinner from "./Spinner";
+import { HiInformationCircle } from "react-icons/hi";
 
 export interface IncidentReport {
   id: string;
@@ -17,24 +21,26 @@ export interface IncidentReport {
     address: string;
   };
   timestamp: Date;
+  regNumber: string;
   studentId: string;
   status: "pending" | "investigating" | "resolved";
 }
 
-interface IncidentFormProps {
-  onSubmit: (report: Omit<IncidentReport, "id">) => void;
-}
+const IncidentForm = () => {
+  const { currentUser, isLoading } = UseAuth();
 
-const IncidentForm = ({ onSubmit }: IncidentFormProps) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [address, setAddress] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [location, setLocation] = useState<{
-    lat: number;
-    lng: number;
-    address?: string;
-  } | null>(null);
+  const {
+    formState: { errors },
+    reset,
+    handleSubmit,
+    register,
+    watch,
+    setValue,
+  } = useForm<IncidentReport>();
+
+  const address = watch("location.address");
+  const locationObj = watch("location");
+  const { mutate, isPending } = useAddReports();
 
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
@@ -44,10 +50,10 @@ const IncidentForm = ({ onSubmit }: IncidentFormProps) => {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setLocation({
+        setValue("location", {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
-          address: address || undefined,
+          address,
         });
         toast.success("Location coordinates captured successfully.");
       },
@@ -58,52 +64,36 @@ const IncidentForm = ({ onSubmit }: IncidentFormProps) => {
     );
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitFn: SubmitHandler<Omit<IncidentReport, "timestamp">> = ({
+    id,
+    title,
+    regNumber,
+    location,
+    description,
+    studentId,
+  }) => {
+    if (!isLoading && !currentUser) return;
+    studentId = currentUser?.id!;
+    regNumber = currentUser?.user_metadata.regNumber;
 
-    if (!title.trim() || !description.trim() || !address.trim()) {
-      toast.error("Please fill in all required fields.");
-      return;
-    }
-
-    if (!location || !location.lat || !location.lng) {
-      toast.error("Please capture your device location coordinates.");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const report: Omit<IncidentReport, "id"> = {
-        title: title.trim(),
-        description: description.trim(),
-        location: {
-          lat: location.lat,
-          lng: location.lng,
-          address: address.trim(),
-        },
-        timestamp: new Date(),
-        studentId: "current-user", // In a real app, this would come from auth
+    mutate(
+      {
+        id,
+        title,
+        regNumber: regNumber.toUpperCase(),
+        location,
+        description,
         status: "pending",
-      };
-
-      onSubmit(report);
-
-      // Reset form
-      setTitle("");
-      setDescription("");
-      setAddress("");
-      setLocation(null);
-
-      toast.success("Report submitted successfully.");
-    } catch (error) {
-      console.error("Error submitting report:", error);
-      toast.error(
-        "There was an error submitting your report. Please try again."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
+        studentId,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Report has been submitted!");
+          reset();
+        },
+        onError: () => toast.error("We could not submit your report!"),
+      }
+    );
   };
 
   return (
@@ -115,38 +105,60 @@ const IncidentForm = ({ onSubmit }: IncidentFormProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(submitFn)} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="title">Incident Title *</Label>
             <Input
+              {...register("title", {
+                required: "Report has to include a title",
+              })}
               id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
               placeholder="Brief description of the incident"
               className="w-full"
             />
+            {errors.title && (
+              <p className="mt-1 text-xs flex items-center gap-x-1 text-red-700">
+                <HiInformationCircle />
+                {errors.title.message}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="description">Detailed Description *</Label>
             <Textarea
               id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              {...register("description", {
+                required: "You need to add a description to your report",
+              })}
               placeholder="Provide detailed information about the security incident..."
               className="min-h-[120px] resize-none"
             />
+            {errors.description && (
+              <p className="mt-1 text-xs flex items-center gap-x-1 text-red-700">
+                <HiInformationCircle />
+                {errors.description.message}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="address">Location Address *</Label>
             <Input
               id="address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              {...register("location.address", {
+                validate: (value) =>
+                  value.length > 3 ? true : "Enter a valid address",
+              })}
               placeholder="Enter the location address"
               className="w-full"
             />
+            {errors.location?.address && (
+              <p className="mt-1 text-xs flex items-center gap-x-1 text-red-700">
+                <HiInformationCircle />
+                {errors.location?.address.message}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -160,12 +172,13 @@ const IncidentForm = ({ onSubmit }: IncidentFormProps) => {
                   type="button"
                   variant="outline"
                   onClick={getCurrentLocation}
-                  className="flex-1 cursor-pointer">
-                  {location?.lat && location?.lng
+                  className="flex-1 cursor-pointer"
+                >
+                  {locationObj?.lat && locationObj?.lng
                     ? "Update Coordinates"
                     : "Capture Coordinates"}
                 </Button>
-                {location?.lat && location?.lng && (
+                {locationObj?.lat && locationObj?.lng && (
                   <div className="flex items-center px-3 py-2 bg-blue-500 text-white border border-success/20 rounded-md text-sm">
                     ✓ Captured
                   </div>
@@ -187,15 +200,9 @@ const IncidentForm = ({ onSubmit }: IncidentFormProps) => {
           <Button
             type="submit"
             className="w-full text-white font-semibold rounded-md h-10 bg-primary text-center"
-            disabled={
-              isSubmitting ||
-              !title.trim() ||
-              !description.trim() ||
-              !address.trim() ||
-              !location?.lat ||
-              !location?.lng
-            }>
-            {isSubmitting ? "Submitting..." : "Submit Report"}
+            disabled={isPending}
+          >
+            {isPending ? <Spinner /> : "Submit Report"}
           </Button>
         </form>
       </CardContent>

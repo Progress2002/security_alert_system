@@ -1,4 +1,4 @@
-import type { adminFormInputs } from "../pages/AdminSignIn";
+// import type { adminFormInputs } from "../pages/AdminSignIn";
 import type { AdminSIgnInDetails, StudentSignInDetails } from "../types";
 import { supabase } from "./supabase";
 import type { User } from "@supabase/supabase-js";
@@ -26,7 +26,7 @@ export async function userSignUp({
   const { error: createProfileError } = await supabase.from("profiles").insert([
     {
       id: data.user?.id,
-      reg_number: regNumber.toUpperCase(),
+      regNumber: regNumber.toUpperCase(),
     },
   ]);
 
@@ -51,7 +51,7 @@ export async function checkUserExistence(regNumber: string): Promise<boolean> {
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
-    .eq("reg_number", regNumber.toUpperCase())
+    .eq("regNumber", regNumber.toUpperCase())
     .maybeSingle();
   if (error) return false;
 
@@ -111,4 +111,9 @@ export async function AdminSignIn({
 
   if (error) throw new Error("Wrong Registration number / Email");
   return data.user;
+}
+
+export async function userLogout() {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw new Error();
 }

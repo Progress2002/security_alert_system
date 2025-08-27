@@ -7,6 +7,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./components/AppLayout";
 import { Bounce, ToastContainer } from "react-toastify";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Error from "./components/Error";
+import History from "./pages/History";
 
 export default function App() {
   const queryClient = new QueryClient({
@@ -17,9 +19,9 @@ export default function App() {
     },
   });
   return (
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <AuthContextProvider>
+    <AuthContextProvider>
+      <BrowserRouter>
+        <QueryClientProvider client={queryClient}>
           <ToastContainer
             position="top-right"
             autoClose={5000}
@@ -44,11 +46,12 @@ export default function App() {
               }
             >
               <Route index element={<Home />} />
-              <Route path="history" element />
+              <Route path="history" element={<History />} />
             </Route>
+            <Route path="*" element={<Error />} />
           </Routes>
-        </AuthContextProvider>
-      </QueryClientProvider>
-    </BrowserRouter>
+        </QueryClientProvider>
+      </BrowserRouter>
+    </AuthContextProvider>
   );
 }

@@ -1,22 +1,28 @@
 import { Link } from "react-router-dom";
 import Logo from "./Logo";
-import { TfiAnnouncement } from "react-icons/tfi";
+import { Button } from "./ui/button";
+import { HistoryIcon, LogOut } from "lucide-react";
+import { useLogout } from "@/hooks/useSignIn";
 
 export default function UserNavigation() {
+  const { logOut, isLoggingOut } = useLogout();
   return (
-    <header className="flex justify-between px-12 w-full py-5 border-b border-b-border">
-      <Link to="/home">
+    <header className="bg-white  top-0 flex justify-between px-12 w-full py-5 border-b border-b-border ">
+      <Link to="/">
         <Logo />
       </Link>
-      <nav>
+      <nav className="flex gap-x-4">
         <Link
-          to="/emergency"
-          className="font-base text-text-secondary flex items-center gap-x-2"
+          to="/history"
+          className="font-base text-text-secondary flex items-center gap-x-1"
           aria-label="Report a bug"
         >
-          <TfiAnnouncement />
-          Report a bug
+          <HistoryIcon />
+          Report History
         </Link>
+        <Button disabled={isLoggingOut} onClick={() => logOut()}>
+          <LogOut /> Log Out
+        </Button>
       </nav>
     </header>
   );
