@@ -4,7 +4,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import Field from "../components/AdminField";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { useState } from "react";
-import { useAdminSignUp } from "../hooks/useSignIn";
+import { useAdminSignIn } from "../hooks/useSignIn";
 import Spinner from "../components/Spinner";
 import { toast } from "react-toastify";
 
@@ -16,7 +16,7 @@ export interface adminFormInputs {
 export default function AdminSignIn() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const navigate = useNavigate();
-  const { signUp, isSigningUp } = useAdminSignUp();
+  const { signUp, isSigningUp } = useAdminSignIn();
   const {
     register,
     formState: { errors },
@@ -53,7 +53,8 @@ export default function AdminSignIn() {
         <div className="flex h-1/2 mt-14 flex-col  mx-auto w-2/3  justify-between ">
           <form
             className="flex gap-6 flex-col"
-            onSubmit={handleSubmit(submitFn)}>
+            onSubmit={handleSubmit(submitFn)}
+          >
             <Field
               errors={errors}
               name="email"
@@ -71,7 +72,12 @@ export default function AdminSignIn() {
               errorText="Enter your correct password"
               placeholder="Enter your password"
               endIcon={
-                <button onClick={() => setShowPassword(!showPassword)}>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowPassword(!showPassword);
+                  }}
+                >
                   {showPassword ? <HiEyeOff size={24} /> : <HiEye size={24} />}
                 </button>
               }
@@ -79,7 +85,8 @@ export default function AdminSignIn() {
             <button
               disabled={isSigningUp}
               type="submit"
-              className="w-full text-white font-semibold rounded-full h-14 bg-primary text-center">
+              className="w-full text-white font-semibold rounded-full h-14 bg-primary text-center"
+            >
               {isSigningUp ? <Spinner /> : "Sign In"}
             </button>
           </form>

@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import type { AdminSIgnInDetails, StudentSignInDetails } from "../types";
-import { adminSignUp, userLogout, userSignUp } from "../services/AuthApi";
+import { AdminSignIn, userLogout, userSignUp } from "../services/AuthApi";
 import { toast } from "react-toastify";
 
 export function useUserSignUp() {
@@ -11,10 +11,10 @@ export function useUserSignUp() {
   return { signUp, isSigningUp };
 }
 
-export function useAdminSignUp() {
+export function useAdminSignIn() {
   const { mutate: signUp, isPending: isSigningUp } = useMutation({
     mutationFn: ({ email, password }: AdminSIgnInDetails) =>
-      adminSignUp({ email, password }),
+      AdminSignIn({ email, password }),
   });
   return { signUp, isSigningUp };
 }

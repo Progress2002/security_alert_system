@@ -1,5 +1,6 @@
 import type { IncidentReport } from "@/components/IncidentForm";
 import { supabase } from "./supabase";
+import type { IncidentFetchResponse } from "@/types";
 
 export async function addReport({
   title,
@@ -39,12 +40,28 @@ export async function fetchReportsById(
   if (error) throw new Error("We could not get the reports");
   return data.reverse() as IncidentReport[];
 }
-export async function fetchAllReports(): Promise<IncidentReport[] | undefined> {
-  const { data, error } = await supabase
-    .from("incident_report")
-    .select("*")
-    .limit(30);
+export async function fetchAllReports(): Promise<IncidentFetchResponse> {
+  const {
+    data: reports,
+    count,
+    error,
+  } = await supabase.from("incident_report").select("*", { count: "exact" });
 
   if (error) throw new Error("We could not get the reports");
-  return data.reverse() as IncidentReport[];
+  return { reports, count };
+}
+
+export async function updateReport({
+  id,
+  newStatus,
+}: {
+  id: string;
+  newStatus: string;
+}) {
+  const { error } = await supabase
+    .from("incident_report")
+    .update({ status: newStatus })
+    .eq("id", id);
+
+  if (error) throw new Error("We could not update the report!");
 }

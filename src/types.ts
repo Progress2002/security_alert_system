@@ -1,3 +1,5 @@
+import type { IncidentReport } from "./components/IncidentForm";
+
 export interface Profile {
   id: string;
   reg_number: string;
@@ -11,4 +13,8 @@ export interface StudentSignInDetails {
 export interface AdminSIgnInDetails {
   email: string;
   password: string;
+}
+export interface IncidentFetchResponse {
+  reports: IncidentReport[] | undefined;
+  count: number | null;
 }

@@ -13,35 +13,25 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { IncidentReport } from "@/components/IncidentForm";
 import ReportsTable from "@/components/ReportsTable";
 import StatisticsCards from "@/components/StatisticsCards";
+import { useFetchAllReports, useUpdateReport } from "@/hooks/useReport";
+import { toast } from "react-toastify";
 
 const AdminDashboard = () => {
-  const [allReports, setAllReports] = useState<IncidentReport[]>([]);
-  const [filteredReports, setFilteredReports] = useState<IncidentReport[]>([]);
+  const { data, isLoading } = useFetchAllReports();
   const [searchTerm, setSearchTerm] = useState("");
+  const [filteredReports, setFilteredReports] = useState<IncidentReport[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>("all");
-
-  // Load reports from localStorage
-  useEffect(() => {
-    const savedReports = localStorage.getItem("allReports");
-    if (savedReports) {
-      const parsed = JSON.parse(savedReports);
-      // Convert timestamp strings back to Date objects
-      const reportsWithDates = parsed.map((report: any) => ({
-        ...report,
-        timestamp: new Date(report.timestamp),
-      }));
-      setAllReports(reportsWithDates);
-      setFilteredReports(reportsWithDates);
-    }
-  }, []);
-
+  const reports = data?.reports;
+  const count = data?.count || null;
+  const { mutate, isPending } = useUpdateReport();
   // Filter reports based on search and status
   useEffect(() => {
-    let filtered = allReports;
-
+    if (isLoading || !reports) return;
+    let filtered = reports;
+    if (filtered?.length === 0 || filtered === undefined) return;
     // Apply search filter
     if (searchTerm.trim()) {
-      filtered = filtered.filter(
+      filtered = filtered?.filter(
         (report) =>
           report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           report.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -51,22 +41,24 @@ const AdminDashboard = () => {
 
     // Apply status filter
     if (statusFilter !== "all") {
-      filtered = filtered.filter((report) => report.status === statusFilter);
+      filtered = filtered?.filter((report) => report.status === statusFilter);
     }
 
     setFilteredReports(filtered);
-  }, [allReports, searchTerm, statusFilter]);
+  }, [reports, searchTerm, statusFilter]);
 
-  const handleStatusToggle = (
+  const handleUpdateReport = (
     reportId: string,
+    studentId: string,
     newStatus: IncidentReport["status"]
   ) => {
-    const updatedReports = allReports.map((report) =>
-      report.id === reportId ? { ...report, status: newStatus } : report
+    mutate(
+      { id: reportId, newStatus, studentId },
+      {
+        onSuccess: () => toast("Report Updated"),
+        onError: (error) => toast.error(error.message),
+      }
     );
-
-    setAllReports(updatedReports);
-    localStorage.setItem("allReports", JSON.stringify(updatedReports));
   };
 
   const handleExport = () => {
@@ -124,7 +116,11 @@ const AdminDashboard = () => {
         </div>
 
         <div className="space-y-6">
-          <StatisticsCards reports={allReports} />
+          <StatisticsCards
+            reports={reports}
+            count={count}
+            isLoading={isLoading}
+          />
 
           <Card className="shadow-lg border-blue-100">
             <CardHeader className="bg-gradient-to-r from-blue-50 to-white">
@@ -170,15 +166,16 @@ const AdminDashboard = () => {
                   All Reports
                 </h2>
                 <span className="text-gray-500">
-                  ({filteredReports.length} of {allReports.length})
+                  ({filteredReports.length} of {count})
                 </span>
               </div>
             </div>
 
             <ReportsTable
+              isPending={isPending}
               reports={filteredReports}
               showStudentId={true}
-              onStatusToggle={handleStatusToggle}
+              onStatusToggle={handleUpdateReport}
             />
           </div>
         </div>

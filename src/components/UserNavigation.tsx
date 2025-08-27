@@ -7,7 +7,7 @@ import { useLogout } from "@/hooks/useSignIn";
 export default function UserNavigation() {
   const { logOut, isLoggingOut } = useLogout();
   return (
-    <header className="bg-white top-0 flex gap-3 justify-between px-5 md:px-12 w-full py-5 border-b border-b-border ">
+    <header className="bg-white fixed top-0 flex gap-3 justify-between px-5 md:px-12 w-full py-5 border-b border-b-border ">
       <Link to="/">
         <Logo />
       </Link>
@@ -15,7 +15,8 @@ export default function UserNavigation() {
         <Link
           to="/history"
           className="font-base text-text-secondary hover:border-b border-primary-light delay-100 flex items-center gap-x-1 font-semibold text-sm"
-          aria-label="Report a bug">
+          aria-label="Report a bug"
+        >
           <HistoryIcon />
           <span className="hidden md:inline">Report</span> History
         </Link>
@@ -23,7 +24,8 @@ export default function UserNavigation() {
           variant="outline"
           className="cursor-pointer"
           disabled={isLoggingOut}
-          onClick={() => logOut()}>
+          onClick={() => logOut()}
+        >
           <LogOut color="red" />{" "}
           <span className="hidden md:inline">Log Out</span>
         </Button>

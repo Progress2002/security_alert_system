@@ -14,8 +14,10 @@ import { formatDateTime } from "@/lib/formatDate";
 interface ReportsTableProps {
   reports: IncidentReport[] | undefined;
   showStudentId?: boolean;
+  isPending?: boolean;
   onStatusToggle?: (
     reportId: string,
+    studentId: string,
     newStatus: IncidentReport["status"]
   ) => void;
 }
@@ -24,6 +26,7 @@ const ReportsTable = ({
   reports,
   showStudentId = false,
   onStatusToggle,
+  isPending,
 }: ReportsTableProps) => {
   const getStatusColor = (status: IncidentReport["status"]) => {
     switch (status) {
@@ -66,7 +69,8 @@ const ReportsTable = ({
       {reports?.map((report) => (
         <Card
           key={report.id}
-          className="hover:shadow-lg transition-all duration-200 border-blue-100 hover:border-blue-200">
+          className="hover:shadow-lg transition-all duration-200 border-blue-100 hover:border-blue-200"
+        >
           <CardHeader className="pb-3">
             <div className="flex flex-col-reverse gap-y-4 md:flex-row items-start justify-between">
               <CardTitle className="text-lg font-medium">
@@ -78,10 +82,12 @@ const ReportsTable = ({
                 </Badge>
                 {onStatusToggle && (
                   <Select
+                    disabled={isPending}
                     value={report.status}
                     onValueChange={(newStatus: IncidentReport["status"]) =>
-                      onStatusToggle(report.id, newStatus)
-                    }>
+                      onStatusToggle(report.id, report.studentId, newStatus)
+                    }
+                  >
                     <SelectTrigger className="w-40 h-8 text-xs">
                       <SelectValue />
                     </SelectTrigger>
@@ -104,7 +110,7 @@ const ReportsTable = ({
               {showStudentId && (
                 <div className="flex items-center gap-2 text-text-secondary">
                   <User className="h-4 w-4" />
-                  <span>Student ID: {report.studentId}</span>
+                  <span>Student ID: {report.regNumber}</span>
                 </div>
               )}
 
@@ -117,7 +123,8 @@ const ReportsTable = ({
                 <a
                   href={`https://www.google.com/maps?q=${report.location.lat},${report.location.lng}`}
                   target="_blank"
-                  className="flex items-center gap-2 text-text-secondary group ">
+                  className="flex items-center gap-2 text-text-secondary group "
+                >
                   <MapPin className="h-4 w-4 animate-bounce group-hover:text-primary-light" />
                   <span>{report.location.address}</span>
                   <span className="whitespace-pre">
