@@ -78,7 +78,7 @@ const AdminDashboard = () => {
         report.description,
         report.studentId,
         report.status,
-        report.timestamp.toISOString(),
+        report.timestamp,
         report.location.address ||
           `${report.location.lat}, ${report.location.lng}`,
       ]),
