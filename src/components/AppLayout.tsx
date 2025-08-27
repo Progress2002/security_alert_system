@@ -3,9 +3,11 @@ import UserNavigation from "./UserNavigation";
 
 export default function AppLayout() {
   return (
-    <div>
+    <div className="flex flex-col ">
       <UserNavigation />
-      <Outlet />
+      <div className="flex-1 overflow-hidden">
+        <Outlet />
+      </div>
     </div>
   );
 }

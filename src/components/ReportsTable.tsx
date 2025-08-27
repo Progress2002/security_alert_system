@@ -11,7 +11,7 @@ import { MapPin, Clock, User } from "lucide-react";
 import type { IncidentReport } from "./IncidentForm";
 
 interface ReportsTableProps {
-  reports: IncidentReport[];
+  reports: IncidentReport[] | undefined;
   showStudentId?: boolean;
   onStatusToggle?: (
     reportId: string,
@@ -50,7 +50,7 @@ const ReportsTable = ({
     }
   };
 
-  if (reports.length === 0) {
+  if (reports?.length === 0) {
     return (
       <Card className="shadow-lg border-blue-100">
         <CardContent className="py-16 text-center">
@@ -62,10 +62,11 @@ const ReportsTable = ({
 
   return (
     <div className="space-y-4">
-      {reports.map((report) => (
+      {reports?.map((report) => (
         <Card
           key={report.id}
-          className="hover:shadow-lg transition-all duration-200 border-blue-100 hover:border-blue-200">
+          className="hover:shadow-lg transition-all duration-200 border-blue-100 hover:border-blue-200"
+        >
           <CardHeader className="pb-3">
             <div className="flex flex-col-reverse md:flex-row items-start justify-between">
               <CardTitle className="text-lg font-medium">
@@ -80,7 +81,8 @@ const ReportsTable = ({
                     value={report.status}
                     onValueChange={(newStatus: IncidentReport["status"]) =>
                       onStatusToggle(report.id, newStatus)
-                    }>
+                    }
+                  >
                     <SelectTrigger className="w-40 h-8 text-xs">
                       <SelectValue />
                     </SelectTrigger>
@@ -112,7 +114,11 @@ const ReportsTable = ({
                 <span>{report.timestamp.toLocaleString()}</span>
               </div>
 
-              <a href={`https://www.google.com/maps?q=${report.location.lat},${report.location.lng}`} target="_blank" className="flex items-center gap-2 text-text-secondary group ">
+              <a
+                href={`https://www.google.com/maps?q=${report.location.lat},${report.location.lng}`}
+                target="_blank"
+                className="flex items-center gap-2 text-text-secondary group "
+              >
                 <MapPin className="h-4 w-4 animate-bounce group-hover:text-primary-light" />
                 <span>{report.location.address}</span>
                 <span className="whitespace-pre">

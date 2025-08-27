@@ -21,12 +21,15 @@ export default function AuthContextProvider({
   const [currentSession, setCurrentSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    setIsLoading(true);
-    supabase.auth.getSession().then(({ data }) => {
+    const init = async () => {
+      setIsLoading(true);
+      const { data } = await supabase.auth.getSession();
       setCurrentSession(data.session);
       setCurrentUser(data.session?.user ?? null);
       setIsLoading(false);
-    });
+    };
+
+    init();
 
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
