@@ -48,7 +48,7 @@ export async function fetchAllReports(): Promise<IncidentFetchResponse> {
   } = await supabase.from("incident_report").select("*", { count: "exact" });
 
   if (error) throw new Error("We could not get the reports");
-  return { reports, count };
+  return { reports: reports.reverse(), count };
 }
 
 export async function updateReport({

@@ -26,10 +26,14 @@ export function useAddReports() {
   const queryclient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: (data: Omit<IncidentReport, "timestamp">) => addReport(data),
-    onSuccess: (_, variables) =>
+    onSuccess: (_, variables) => {
       queryclient.invalidateQueries({
         queryKey: ["Reports", variables.studentId],
-      }),
+      });
+      queryclient.invalidateQueries({
+        queryKey: ["All Reports"],
+      });
+    },
   });
   return { mutate, isPending };
 }
