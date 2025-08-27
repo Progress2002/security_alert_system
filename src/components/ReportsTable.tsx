@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select";
 import { MapPin, Clock, User } from "lucide-react";
 import type { IncidentReport } from "./IncidentForm";
+import { formatDateTime } from "@/lib/formatDate";
 
 interface ReportsTableProps {
   reports: IncidentReport[] | undefined;
@@ -65,10 +66,9 @@ const ReportsTable = ({
       {reports?.map((report) => (
         <Card
           key={report.id}
-          className="hover:shadow-lg transition-all duration-200 border-blue-100 hover:border-blue-200"
-        >
+          className="hover:shadow-lg transition-all duration-200 border-blue-100 hover:border-blue-200">
           <CardHeader className="pb-3">
-            <div className="flex flex-col-reverse md:flex-row items-start justify-between">
+            <div className="flex flex-col-reverse gap-y-4 md:flex-row items-start justify-between">
               <CardTitle className="text-lg font-medium">
                 {report.title}
               </CardTitle>
@@ -81,8 +81,7 @@ const ReportsTable = ({
                     value={report.status}
                     onValueChange={(newStatus: IncidentReport["status"]) =>
                       onStatusToggle(report.id, newStatus)
-                    }
-                  >
+                    }>
                     <SelectTrigger className="w-40 h-8 text-xs">
                       <SelectValue />
                     </SelectTrigger>
@@ -111,21 +110,31 @@ const ReportsTable = ({
 
               <div className="flex items-center gap-2 text-text-secondary">
                 <Clock className="h-4 w-4" />
-                <span>{report.timestamp.toLocaleString()}</span>
+                <span>{formatDateTime(report.timestamp)}</span>
               </div>
 
-              <a
-                href={`https://www.google.com/maps?q=${report.location.lat},${report.location.lng}`}
-                target="_blank"
-                className="flex items-center gap-2 text-text-secondary group "
-              >
-                <MapPin className="h-4 w-4 animate-bounce group-hover:text-primary-light" />
-                <span>{report.location.address}</span>
-                <span className="whitespace-pre">
-                  [{report.location.lat.toFixed(4)},
-                  {report.location.lng.toFixed(4)}]
-                </span>
-              </a>
+              {showStudentId ? (
+                <a
+                  href={`https://www.google.com/maps?q=${report.location.lat},${report.location.lng}`}
+                  target="_blank"
+                  className="flex items-center gap-2 text-text-secondary group ">
+                  <MapPin className="h-4 w-4 animate-bounce group-hover:text-primary-light" />
+                  <span>{report.location.address}</span>
+                  <span className="whitespace-pre">
+                    [{report.location.lat.toFixed(4)},
+                    {report.location.lng.toFixed(4)}]
+                  </span>
+                </a>
+              ) : (
+                <div className="flex items-center gap-2 text-text-secondary">
+                  <MapPin className="h-4 w-4" />
+                  <span>{report.location.address}</span>
+                  <span className="whitespace-pre">
+                    [{report.location.lat.toFixed(4)},
+                    {report.location.lng.toFixed(4)}]
+                  </span>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

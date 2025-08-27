@@ -10,6 +10,7 @@ import { useAddReports } from "@/hooks/useReport";
 import { UseAuth } from "@/contexts/AuthContext";
 import Spinner from "./Spinner";
 import { HiInformationCircle } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
 
 export interface IncidentReport {
   id: string;
@@ -41,6 +42,7 @@ const IncidentForm = () => {
   const address = watch("location.address");
   const locationObj = watch("location");
   const { mutate, isPending } = useAddReports();
+  const navigate = useNavigate();
 
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
@@ -90,6 +92,7 @@ const IncidentForm = () => {
         onSuccess: () => {
           toast.success("Report has been submitted!");
           reset();
+          navigate("/history");
         },
         onError: () => toast.error("We could not submit your report!"),
       }
@@ -172,8 +175,7 @@ const IncidentForm = () => {
                   type="button"
                   variant="outline"
                   onClick={getCurrentLocation}
-                  className="flex-1 cursor-pointer"
-                >
+                  className="flex-1 cursor-pointer">
                   {locationObj?.lat && locationObj?.lng
                     ? "Update Coordinates"
                     : "Capture Coordinates"}
@@ -199,9 +201,8 @@ const IncidentForm = () => {
 
           <Button
             type="submit"
-            className="w-full text-white font-semibold rounded-md h-10 bg-primary text-center"
-            disabled={isPending}
-          >
+            className="w-full text-white font-semibold rounded-md h-10 bg-primary text-center cursor-pointer"
+            disabled={isPending}>
             {isPending ? <Spinner /> : "Submit Report"}
           </Button>
         </form>

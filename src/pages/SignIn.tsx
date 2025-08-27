@@ -103,7 +103,7 @@ export default function SignIn() {
               {isSigningUp ? <Spinner /> : "Sign In"}
             </button>
           </form>
-          <div className="flex gap-2 w-full justify-center">
+          <div className="flex gap-2 mt-5 w-full justify-center">
             <p className="text-sm text-text-secondary">
               Responding to Emergencies?{" "}
             </p>

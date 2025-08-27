@@ -9,7 +9,6 @@ export default function ProtectedRoute({
   children: React.ReactNode;
 }) {
   const { currentUser, isLoading } = UseAuth();
-  console.log(isLoading);
   if (isLoading) {
     return (
       <div className="w-[100dvw] h-[100dvh]">

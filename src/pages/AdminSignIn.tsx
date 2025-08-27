@@ -53,8 +53,7 @@ export default function AdminSignIn() {
         <div className="flex h-1/2 mt-14 flex-col  mx-auto w-2/3  justify-between ">
           <form
             className="flex gap-6 flex-col"
-            onSubmit={handleSubmit(submitFn)}
-          >
+            onSubmit={handleSubmit(submitFn)}>
             <Field
               errors={errors}
               name="email"
@@ -80,12 +79,11 @@ export default function AdminSignIn() {
             <button
               disabled={isSigningUp}
               type="submit"
-              className="w-full text-white font-semibold rounded-full h-14 bg-primary text-center"
-            >
+              className="w-full text-white font-semibold rounded-full h-14 bg-primary text-center">
               {isSigningUp ? <Spinner /> : "Sign In"}
             </button>
           </form>
-          <div className="flex gap-2 w-full justify-center">
+          <div className="flex gap-2 mt-5 w-full justify-center">
             <p className="text-sm text-text-secondary">
               Want to report an incident?
             </p>
