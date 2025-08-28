@@ -22,7 +22,7 @@ export async function userSignUp({
     },
   });
 
-  if (error) throw new Error("We could not sign you up!");
+  if (error) throw new Error("Unable to sign you up!");
   const { error: createProfileError } = await supabase.from("profiles").insert([
     {
       id: data.user?.id,
@@ -30,7 +30,7 @@ export async function userSignUp({
     },
   ]);
 
-  if (createProfileError) throw new Error("We could not create your profile!");
+  if (createProfileError) throw new Error("Unable to create your profile!");
 }
 
 export async function userSignIn({
@@ -88,7 +88,7 @@ export async function adminSignUp({
     },
   });
 
-  if (error) throw new Error("We could not sign you up!");
+  if (error) throw new Error("Unable to sign you up!");
   const { error: createProfileError } = await supabase.from("profiles").insert([
     {
       id: data.user?.id,
@@ -97,7 +97,7 @@ export async function adminSignUp({
     },
   ]);
 
-  if (createProfileError) throw new Error("We could not create your profile!");
+  if (createProfileError) throw new Error("Unable to create profile!");
 }
 
 export async function AdminSignIn({
