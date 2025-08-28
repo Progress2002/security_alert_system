@@ -37,7 +37,7 @@ export default function Field({
           type={type}
           name={name}
           placeholder={placeholder}
-          className="bg-primary-surface rounded-full text-primary-dark h-14 w-full px-12 placeholder:text-text-secondary focus:outline-0"
+          className="bg-white md:bg-primary-surface rounded-xl text-primary-dark h-14 w-full px-5 md:px-12 placeholder:text-text-secondary focus:outline-0"
         />
         {endIcon && (
           <div className="absolute right-5 h-full top-0 mt-4">{endIcon}</div>
