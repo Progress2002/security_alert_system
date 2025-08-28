@@ -36,6 +36,7 @@ const IncidentForm = () => {
     handleSubmit,
     register,
     setError,
+    clearErrors,
     watch,
     setValue,
   } = useForm<IncidentReport>();
@@ -48,11 +49,16 @@ const IncidentForm = () => {
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
       toast.warning("Your browser doesn't support location services.");
+      setError("location", {
+        type: "manual",
+        message: "We need to capture your location",
+      });
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        clearErrors("location");
         setValue("location", {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
@@ -61,7 +67,10 @@ const IncidentForm = () => {
         toast.success("Location coordinates captured successfully.");
       },
       (error) => {
-        console.error("Error getting location:", error);
+        setError("location", {
+          type: "manual",
+          message: error.message,
+        });
         toast.error("Could not get your current location. Please try again.");
       }
     );
@@ -76,6 +85,7 @@ const IncidentForm = () => {
     studentId,
   }) => {
     if (!isLoading && !currentUser) return;
+
     if (!location.lat || !location.lng) {
       setError("location", {
         type: "manual",
