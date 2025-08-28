@@ -35,6 +35,7 @@ const IncidentForm = () => {
     reset,
     handleSubmit,
     register,
+    setError,
     watch,
     setValue,
   } = useForm<IncidentReport>();
@@ -75,6 +76,16 @@ const IncidentForm = () => {
     studentId,
   }) => {
     if (!isLoading && !currentUser) return;
+    if (!location.lat || !location.lng) {
+      setError("location", {
+        type: "manual",
+        message: "We need to capture your location",
+      });
+      toast.error("We have to capture your location");
+
+      return;
+    }
+
     studentId = currentUser?.id!;
     regNumber = currentUser?.user_metadata.regNumber;
 
@@ -175,7 +186,8 @@ const IncidentForm = () => {
                   type="button"
                   variant="outline"
                   onClick={getCurrentLocation}
-                  className="flex-1 cursor-pointer">
+                  className={`${errors.location ? "border border-red-500" : ""} flex-1 cursor-pointer`}
+                >
                   {locationObj?.lat && locationObj?.lng
                     ? "Update Coordinates"
                     : "Capture Coordinates"}
@@ -202,7 +214,8 @@ const IncidentForm = () => {
           <Button
             type="submit"
             className="w-full text-white font-semibold rounded-md h-10 bg-primary text-center cursor-pointer"
-            disabled={isPending}>
+            disabled={isPending}
+          >
             {isPending ? <Spinner /> : "Submit Report"}
           </Button>
         </form>
