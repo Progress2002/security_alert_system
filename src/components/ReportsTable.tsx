@@ -69,8 +69,7 @@ const ReportsTable = ({
       {reports?.map((report) => (
         <Card
           key={report.id}
-          className="hover:shadow-lg transition-all duration-200 border-blue-100 hover:border-blue-200"
-        >
+          className="hover:shadow-lg transition-all duration-200 border-blue-100 hover:border-blue-200">
           <CardHeader className="pb-3">
             <div className="flex flex-col-reverse gap-y-4 md:flex-row items-start justify-between">
               <CardTitle className="text-lg font-medium">
@@ -86,8 +85,7 @@ const ReportsTable = ({
                     value={report.status}
                     onValueChange={(newStatus: IncidentReport["status"]) =>
                       onStatusToggle(report.id, report.studentId, newStatus)
-                    }
-                  >
+                    }>
                     <SelectTrigger className="w-40 h-8 text-xs">
                       <SelectValue />
                     </SelectTrigger>
@@ -121,15 +119,25 @@ const ReportsTable = ({
 
               {showStudentId ? (
                 <a
-                  href={`https://www.google.com/maps?q=${report.location.lat},${report.location.lng}`}
+                  href={
+                    report.location?.lat != null && report.location?.lng != null
+                      ? `https://www.google.com/maps?q=${report.location.lat},${report.location.lng}`
+                      : undefined
+                  }
                   target="_blank"
-                  className="flex items-center gap-2 text-text-secondary group "
-                >
+                  className="flex items-center gap-2 text-text-secondary group ">
                   <MapPin className="h-4 w-4 animate-bounce group-hover:text-primary-light" />
                   <span>{report.location.address}</span>
                   <span className="whitespace-pre">
-                    [{report.location.lat.toFixed(4)},
-                    {report.location.lng.toFixed(4)}]
+                    [
+                    {report.location?.lat != null
+                      ? report.location.lat.toFixed(4)
+                      : "N/A"}
+                    ,
+                    {report.location?.lng != null
+                      ? report.location.lng.toFixed(4)
+                      : "N/A"}
+                    ]
                   </span>
                 </a>
               ) : (
