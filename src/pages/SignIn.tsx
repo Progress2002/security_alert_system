@@ -64,33 +64,32 @@ export default function SignIn() {
           </p>
         </div>
       </section>
-      <section className="w-full flex justify-center flex-col md:basis-1/2 md:h-full py-10 relative">
+      <section className="w-full flex justify-center flex-col md:basis-1/2 md:h-full py-10 relative bg-gradient-to-t from-primary-dark to-primary/10 md:bg-none md:from-transparent md:to-transparent">
         <Logo styles="absolute top-10 left-10" />
-        <div className="mt-5 mx-auto w-2/3 ">
+        <div className="mt-5 mx-auto w-5/6 md:w-2/3 ">
           <h2 className="text-4xl text-text-primary font-bold">Sign In</h2>
-          <p className="mt-2 text-text-secondary">
+          <p className="mt-2 md:text-text-secondary">
             Login to start reporting incidents.
           </p>
         </div>
-        <div className="flex h-1/2 mt-14 flex-col  mx-auto w-2/3  justify-between ">
+        <div className="flex h-1/2 mt-14 flex-col  mx-auto w-5/6 md:w-2/3  justify-between ">
           <form
             className="flex gap-6 flex-col"
-            onSubmit={handleSubmit(submitFn)}
-          >
+            onSubmit={handleSubmit(submitFn)}>
             <Field
               errors={errors}
               name="regNumber"
               type="text"
               register={register}
               pattern={/^[A-Za-z]{3}\/\d{2}\/[A-Za-z]{3}\/\d{5}$/}
-              errorText="Enter a valid Registration Number"
-              placeholder="Enter your Registration Number"
+              errorText="Enter a valid Reg. No."
+              placeholder="Enter your Reg. No."
             />
             <Field
               errors={errors}
               name="email"
               type="email"
-              placeholder="Enter your school Email"
+              placeholder="Enter your student email"
               register={register}
               pattern={/^[a-zA-Z]{2,3}\d{7}\.[a-zA-Z]{3}@buk\.edu\.ng$/}
               errorText="Enter a valid school Email Address"
@@ -98,19 +97,17 @@ export default function SignIn() {
             <button
               disabled={isSigningUp}
               type="submit"
-              className="w-full text-white font-semibold rounded-full h-14 bg-primary text-center"
-            >
+              className="w-full text-white font-semibold rounded-full h-14 bg-primary text-center">
               {isSigningUp ? <Spinner /> : "Sign In"}
             </button>
           </form>
           <div className="flex gap-2 mt-5 w-full justify-center">
-            <p className="text-sm text-text-secondary">
+            <p className="text-sm md:text-text-secondary">
               Responding to Emergencies?{" "}
             </p>
             <Link
               to="/admin/sign-in"
-              className="text-primary text-sm font-semibold"
-            >
+              className="text-white md:text-primary text-sm font-semibold">
               Sign in here
             </Link>
           </div>

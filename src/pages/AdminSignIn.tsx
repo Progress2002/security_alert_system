@@ -40,21 +40,20 @@ export default function AdminSignIn() {
 
   return (
     <main className="w-full max-w-[2480px] h-[100dvh] mx-auto gap-16 flex  font-base">
-      <section className="w-full flex justify-center flex-col md:basis-1/2 md:h-full py-10 relative">
+      <section className="w-full flex justify-center flex-col md:basis-1/2 md:h-full py-10 relative bg-gradient-to-t from-primary-dark to-primary/10 md:bg-none md:from-transparent md:to-transparent">
         <Logo styles="absolute top-10 left-10" />
-        <div className="mt-5 mx-auto w-2/3 ">
+        <div className="mt-5 mx-auto w-5/6 md:w-2/3 ">
           <h2 className="text-4xl text-text-primary font-bold">
             Admin Sign In
           </h2>
-          <p className="mt-2 text-text-secondary">
+          <p className="mt-2 md:text-text-secondary">
             Login to start responding to incidents. This page is restricted.
           </p>
         </div>
-        <div className="flex h-1/2 mt-14 flex-col  mx-auto w-2/3  justify-between ">
+        <div className="flex h-1/2 mt-14 flex-col  mx-auto w-5/6 md:w-2/3  justify-between ">
           <form
             className="flex gap-6 flex-col"
-            onSubmit={handleSubmit(submitFn)}
-          >
+            onSubmit={handleSubmit(submitFn)}>
             <Field
               errors={errors}
               name="email"
@@ -76,8 +75,7 @@ export default function AdminSignIn() {
                   onClick={(e) => {
                     e.preventDefault();
                     setShowPassword(!showPassword);
-                  }}
-                >
+                  }}>
                   {showPassword ? <HiEyeOff size={24} /> : <HiEye size={24} />}
                 </button>
               }
@@ -85,16 +83,17 @@ export default function AdminSignIn() {
             <button
               disabled={isSigningUp}
               type="submit"
-              className="w-full text-white font-semibold rounded-full h-14 bg-primary text-center"
-            >
+              className="w-full text-white font-semibold rounded-full h-14 bg-primary text-center">
               {isSigningUp ? <Spinner /> : "Sign In"}
             </button>
           </form>
           <div className="flex gap-2 mt-5 w-full justify-center">
-            <p className="text-sm text-text-secondary">
+            <p className="text-sm md:text-text-secondary">
               Want to report an incident?
             </p>
-            <Link to="/sign-in" className="text-primary text-sm font-semibold">
+            <Link
+              to="/sign-in"
+              className="text-white md:text-primary text-sm font-semibold">
               Sign in here
             </Link>
           </div>
