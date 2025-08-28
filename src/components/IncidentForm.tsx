@@ -183,7 +183,6 @@ const IncidentForm = () => {
               </p>
             )}
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
@@ -195,8 +194,7 @@ const IncidentForm = () => {
                   type="button"
                   variant="outline"
                   onClick={getCurrentLocation}
-                  className={`${errors.location ? "border border-red-500" : ""} flex-1 cursor-pointer`}
-                >
+                  className={`${errors.location ? "border border-red-500" : ""} flex-1 cursor-pointer`}>
                   {locationObj?.lat && locationObj?.lng
                     ? "Update Coordinates"
                     : "Capture Coordinates"}
@@ -223,8 +221,7 @@ const IncidentForm = () => {
           <Button
             type="submit"
             className="w-full text-white font-semibold rounded-md h-10 bg-primary text-center cursor-pointer"
-            disabled={isPending}
-          >
+            disabled={isPending}>
             {isPending ? <Spinner /> : "Submit Report"}
           </Button>
         </form>
