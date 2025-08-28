@@ -42,7 +42,7 @@ export async function userSignIn({
     password: regNumber.toLowerCase(),
   });
 
-  if (error) throw new Error("Wrong Registration number / Email");
+  if (error) throw new Error("Invalid Registration number/email");
   return data.user;
 }
 
@@ -109,7 +109,7 @@ export async function AdminSignIn({
     password,
   });
 
-  if (error) throw new Error("Wrong Registration number / Email");
+  if (error) throw new Error("Invalid email/password");
   return data.user;
 }
 
