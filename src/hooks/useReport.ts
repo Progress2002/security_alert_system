@@ -43,7 +43,6 @@ export function useUpdateReport() {
   const { mutate, isPending } = useMutation({
     mutationFn: ({
       id,
-      studentId,
       newStatus,
     }: {
       id: string;
