@@ -85,7 +85,6 @@ const IncidentForm = () => {
     studentId,
   }) => {
     if (!isLoading && !currentUser) return;
-
     if (!location.lat || !location.lng) {
       setError("location", {
         type: "manual",
